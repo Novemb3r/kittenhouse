@@ -19,7 +19,7 @@ import (
 	"time"
 
 	"github.com/vkcom/engine-go/srvfunc"
-	"github.com/vkcom/kittenhouse/core/destination"
+	"github.com/Novemb3r/kittenhouse/core/destination"
 )
 
 const (
@@ -466,7 +466,7 @@ func flush(dst *destination.Setting, table string, body []byte, rowBinary bool, 
 		compressionArgs = "decompress=1&http_native_compression_disable_checksumming_on_decompress=1&"
 	}
 
-	url := fmt.Sprintf("http://%s/?input_format_values_interpret_expressions=0&%squery=%s", srv, compressionArgs, queryPrefix)
+	url := fmt.Sprintf("http://%s/?input_format_values_interpret_expressions=1&%squery=%s", srv, compressionArgs, queryPrefix)
 
 	resp, err := httpClient.Post(url, "application/x-www-form-urlencoded", bytes.NewReader(body))
 	if err != nil {

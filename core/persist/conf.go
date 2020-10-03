@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/vkcom/kittenhouse/core/destination"
+	"github.com/Novemb3r/kittenhouse/core/destination"
 )
 
 // Config for package

@@ -215,7 +215,7 @@ func getFlusherForTable(table string, rowBinary bool) *flusher {
 		m.Lock()
 		fl, ok = m.m[table]
 		if !ok {
-			uri := fmt.Sprintf("/?input_format_values_interpret_expressions=0&query=%s", insertQueryPrefixEscaped(table, rowBinary))
+			uri := fmt.Sprintf("/?input_format_values_interpret_expressions=1&query=%s", insertQueryPrefixEscaped(table, rowBinary))
 			fl = &flusher{
 				reqCh:            make(chan request),
 				readThrottleChan: make(chan struct{}, maxConcurrentReaders),
