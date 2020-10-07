@@ -2,14 +2,15 @@ package main
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 	"time"
 
-	"github.com/valyala/fasthttp"
 	"github.com/Novemb3r/kittenhouse/core/clickhouse"
 	"github.com/Novemb3r/kittenhouse/core/cmd"
 	"github.com/Novemb3r/kittenhouse/core/inmem"
 	"github.com/Novemb3r/kittenhouse/core/persist"
+	"github.com/valyala/fasthttp"
 )
 
 const (
@@ -70,7 +71,7 @@ func handlePOST(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	data := ctx.PostBody()
+	data, _ := url.QueryUnescape(string(ctx.PostBody()[:]))
 	rowbinary := args.GetUintOrZero("rowbinary") == 1
 
 	if args.GetUintOrZero("debug") == 1 {
@@ -82,7 +83,7 @@ func handlePOST(ctx *fasthttp.RequestCtx) {
 		err := clickhouse.Flush(
 			clickhouse.GetDestinationSetting(strings.TrimSpace(tableClean)),
 			tableWithColumns,
-			[]byte(data),
+			[]byte(data[:]),
 			rowbinary,
 		)
 		if err != nil {
@@ -91,13 +92,13 @@ func handlePOST(ctx *fasthttp.RequestCtx) {
 			return
 		}
 	} else if args.GetUintOrZero("persistent") == 1 {
-		if err := persist.Write(string(table), data, rowbinary); err != nil {
+		if err := persist.Write(string(table), []byte(data[:]), rowbinary); err != nil {
 			ctx.SetStatusCode(500)
 			ctx.WriteString(err.Error())
 			return
 		}
 	} else {
-		if err := inmem.Write(string(table), data, rowbinary); err != nil {
+		if err := inmem.Write(string(table), []byte(data[:]), rowbinary); err != nil {
 			ctx.SetStatusCode(500)
 			ctx.WriteString(err.Error())
 			return
